@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+python-multipart
+pydantic
+openai-whisper
+google-generativeai
+weasyprint
+sqlalchemy
+python-dotenv
+aiofiles
+pymupdf
