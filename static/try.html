@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Interview - InterviewPilot</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <script src="https://unpkg.com/htmx.org@1.9.6"></script>
+</head>
+<body>
+    <div class="container">
+        <nav style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;">
+            <a href="/" style="text-decoration: none;">
+                <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-color);">Interview<span style="color: var(--text-muted);">Pilot</span></div>
+            </a>
+        </nav>
+
+        <section class="hero-section" style="min-height: 60vh;">
+            <div class="glass-card" style="max-width: 600px; width: 100%; margin: 0 auto;">
+                <h2 style="text-align: center; margin-bottom: 0.5rem;">Start Your Session</h2>
+                <p style="text-align: center; margin-bottom: 2rem;">Upload your details to generate a personalized AI interviewer.</p>
+                
+                <form id="upload-form">
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Job Description (PDF)</label>
+                        <input type="file" id="jd" name="jd" accept=".pdf" required>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label style="display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Your Resume (PDF)</label>
+                        <input type="file" id="resume" name="resume" accept=".pdf" required>
+                    </div>
+
+                    <button type="submit" id="start-btn" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">
+                        Start Interview
+                    </button>
+                </form>
+                
+                <div id="status-message" style="text-align: center; margin-top: 1rem; color: var(--text-muted); display: none;">
+                    Analyzing documents and building persona...
+                </div>
+                
+                <div id="error-message" style="text-align: center; margin-top: 1rem; color: var(--destructive); display: none;"></div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const btn = document.getElementById('start-btn');
+            const statusMsg = document.getElementById('status-message');
+            const errorMsg = document.getElementById('error-message');
+            
+            btn.disabled = true;
+            btn.innerText = 'Processing...';
+            statusMsg.style.display = 'block';
+            errorMsg.style.display = 'none';
+            
+            try {
+                const formData = new FormData();
+                formData.append('jd', document.getElementById('jd').files[0]);
+                formData.append('resume', document.getElementById('resume').files[0]);
+                
+                // Build Persona
+                const personaResponse = await fetch('/api/v1/agent/build', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!personaResponse.ok) {
+                    throw new Error('Failed to build persona');
+                }
+                
+                const persona = await personaResponse.json();
+                
+                // Start Session
+                const sessionResponse = await fetch('/api/v1/session/start', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ agent_persona: persona, duration_minutes: 15 })
+                });
+                
+                if (!sessionResponse.ok) {
+                    throw new Error('Failed to start session');
+                }
+                
+                const session = await sessionResponse.json();
+                
+                // Redirect to interview
+                localStorage.setItem('session_id', session.session_id);
+                localStorage.setItem('first_question', JSON.stringify(session.first_question));
+                window.location.href = '/interview.html';
+                
+            } catch (error) {
+                console.error('Error:', error);
+                errorMsg.innerText = 'Error starting interview. Please try again.';
+                errorMsg.style.display = 'block';
+                statusMsg.style.display = 'none';
+                btn.disabled = false;
+                btn.innerText = 'Start Interview';
+            }
+        });
+    </script>
+</body>
+</html>

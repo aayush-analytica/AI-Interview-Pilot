@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Interview Session</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <div style="max-width: 1400px; margin: 0 auto; padding: 2rem;">
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <div style="font-size: 1.5rem; font-weight: 700; color: var(--text-color);">Interview<span style="color: var(--text-muted);">Pilot</span></div>
+            <div style="display: flex; gap: 2rem; align-items: center;">
+                <div style="color: var(--text-color); font-size: 1.1rem;">
+                    ⏱️ <span id="time-display">--:--</span>
+                </div>
+                <button id="end-btn" class="btn" style="background: var(--destructive); color: white; border-color: var(--destructive);">End Session</button>
+            </div>
+        </div>
+
+        <!-- Main Interview Area -->
+        <div style="display: grid; grid-template-columns: 1fr 350px; gap: 2rem;">
+            <!-- Left: Interviewer Section -->
+            <div style="display: flex; flex-direction: column; gap: 2rem;">
+                <!-- Interviewer Avatar & Question -->
+                <div class="glass-card" style="min-height: 400px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 3rem;">
+                    <div class="avatar-placeholder" style="margin-bottom: 2rem;">AI</div>
+                    <div id="interviewer-text" style="font-size: 1.3rem; line-height: 1.8; color: var(--text-color); max-width: 700px;">
+                        Initializing interview...
+                    </div>
+                </div>
+
+                <!-- VAD Status Bar -->
+                <div id="vad-status" class="status-indicator" style="justify-content: center; font-size: 1rem;">
+                    <span id="vad-icon">🎤</span> <span id="vad-text">Waiting for you to speak...</span>
+                </div>
+            </div>
+
+            <!-- Right: User Video & Controls -->
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <!-- User Video Feed -->
+                <div style="position: relative; background: #000; border-radius: 15px; overflow: hidden; border: 2px solid var(--border-color); aspect-ratio: 4/3;">
+                    <video id="user-video" autoplay muted playsinline style="width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1);"></video>
+                    <div id="face-status" style="position: absolute; bottom: 10px; left: 10px; color: white; font-size: 12px; background: rgba(0,0,0,0.8); padding: 5px 10px; border-radius: 6px; display: none;">Initializing...</div>
+                </div>
+
+                <!-- Info Panel -->
+                <div class="glass-card" style="padding: 1.5rem;">
+                    <h3 style="margin: 0 0 1rem 0; font-size: 1.1rem; color: var(--text-color);">Session Info</h3>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.9rem; color: var(--text-muted);">
+                        <div>💬 Speak clearly and naturally</div>
+                        <div>👀 Stay in camera view</div>
+                        <div>⏸️ Take your time to think</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Start Overlay for User Gesture -->
+    <div id="start-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: flex; justify-content: center; align-items: center; z-index: 1000;">
+        <div class="glass-card" style="max-width: 500px; text-align: center; padding: 3rem;">
+            <h2 style="color: var(--text-color); margin-bottom: 1rem;">Ready for your Interview?</h2>
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Click below to enable microphone and camera access.</p>
+            <button id="init-btn" class="btn btn-primary" style="padding: 1rem 3rem; font-size: 1.1rem;">Start Interview</button>
+        </div>
+    </div>
+
+    <!-- TensorFlow.js and Blazeface -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface"></script>
+
+    <script src="/js/interview.js"></script>
+</body>
+</html>
